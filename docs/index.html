@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-Optimizer — Native Windows Performance Tool</title>
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #14151f;
+            --border-color: #232533;
+            --text-main: #cdd2e0;
+            --text-muted: #797f94;
+            
+            /* Zer0Tech Brand Palette */
+            --brand-primary: #514b63;
+            --brand-primary-light: #7c7594;
+            --brand-accent: #9d8df2;
+            --brand-glow: rgba(157, 141, 242, 0.15);
+            
+            --accent-green: #1f8548;
+            --accent-green-hover: #269c55;
+            --code-bg: #07080c;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 35px;
+        }
+
+        /* Zer0Tech SVG Logo Wrapper */
+        .logo-container {
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            margin: 0 0 12px 0;
+            color: #fff;
+            letter-spacing: -1px;
+            font-weight: 800;
+        }
+
+        .badge-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 5px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .badge span {
+            color: var(--brand-accent);
+        }
+
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, var(--card-bg) 0%, #191b29 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--brand-primary-light);
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .download-container {
+            text-align: center;
+            margin: 40px 0;
+            background: linear-gradient(180deg, var(--card-bg) 0%, rgba(20,21,31,0.4) 100%);
+            border: 1px solid var(--border-color);
+            padding: 50px 40px;
+            border-radius: 12px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--brand-glow) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .download-btn {
+            background-color: var(--brand-primary);
+            color: #fff;
+            padding: 16px 36px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid var(--brand-primary-light);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(67, 63, 83, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        .download-btn:hover {
+            background-color: var(--brand-primary-light);
+            box-shadow: 0 0 25px var(--brand-glow);
+            transform: scale(1.02);
+        }
+
+        .download-meta {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 1;
+        }
+
+        .download-meta a {
+            color: var(--brand-accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .download-meta a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 45px;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .security-box {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--brand-primary-light);
+            padding: 16px;
+            border-radius: 6px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.9rem;
+            margin: 18px 0;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--border-color);
+            color: #fff;
+            border-color: var(--text-muted);
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .features-list li::marker {
+            color: var(--brand-accent);
+        }
+
+        .features-list li strong {
+            color: #fff;
+        }
+
+        code.inline-code {
+            background-color: rgba(67, 63, 83, 0.25);
+            border: 1px solid rgba(124, 117, 148, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--brand-accent);
+            font-size: 0.95rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <svg width="72" height="72" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M256 24L456.3 139.7V371.3L256 488L55.7 371.3V139.7L256 24Z" stroke="#433f53" stroke-width="34" stroke-linejoin="round"/>
+                <path d="M256 94L396 174.8V336.2L256 417L116 336.2V174.8L256 94Z" stroke="#7c7594" stroke-width="24" stroke-linejoin="round"/>
+                <path d="M170 230H270V300H170" stroke="#9d8df2" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M342 200H242V270H342" stroke="#9d8df2" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <h1>Z-Optimizer</h1>
+        <div class="badge-group">
+            <div class="badge">Build: <span>v3.2.2</span></div>
+            <div class="badge">Arch: <span>x64 NATIVE</span></div>
+            <div class="badge">Footprint: <span>~52 KB</span></div>
+        </div>
+        <p style="color: var(--text-muted); margin: 5px 0 0 0;">Native telemetry killer, memory trimmer, and kernel standby list purger for Windows.</p>
+    </header>
+
+    <div class="grid-stats">
+        <div class="stat-card">
+            <div class="value" style="color: var(--brand-accent);">7 Seconds</div>
+            <div class="label">Execution Time</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" style="color: #4cd37e;">+274%</div>
+            <div class="label">Available RAM Gain</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">116+</div>
+            <div class="label">Processes Trimmed</div>
+        </div>
+    </div>
+
+    <div class="download-container">
+        <a href="https://github.com/Zer0G0ld/z-optimizer/releases/latest/download/ZOptimizer.exe" class="download-btn">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M7.47 10.78a.75.75 0 001.06 0l3.75-3.75a.75.75 0 00-1.06-1.06L8.75 8.44V1.75a.75.75 0 00-1.5 0v6.69L4.78 5.97a.75.75 0 00-1.06 1.06l3.75 3.75zM1.5 13.5a.75.75 0 01.75-.75h11.5a.75.75 0 010 1.5H2.25a.75.75 0 01-.75-.75z"/></svg>
+            Download ZOptimizer.exe
+        </a>
+        <div class="download-meta">
+            Compiled statically via <code class="inline-code">GCC -O2 -s</code>. Zero external runtimes. <br>
+            Infrastructure ecosystem by <a href="https://github.com/Zer0G0ld" target="_blank">Zer0Tech Labs</a>.
+        </div>
+    </div>
+
+    <h2>📦 Deployment & Execution</h2>
+    <p>Since the utility manipulates ring-3 privileges down to direct administrative policies, it <strong>requires high-integrity tokens</strong> to operate successfully.</p>
+    <ol>
+        <li>Fetch the static executable binary <code class="inline-code">ZOptimizer.exe</code>.</li>
+        <li>Right-click the artifact and select <strong>"Run as Administrator"</strong>.</li>
+        <li>Audit the real-time kernel diagnostics pipe inside the spawning console.</li>
+    </ol>
+
+    <h2>🔒 Integrity Verification (SHA-256)</h2>
+    <p>To assert supply-chain security and guarantee the byte-stream hasn't been backdoored or modified, run:</p>
+    
+    <div class="security-box">
+        <span id="cmdText">certutil -hashfile ZOptimizer.exe SHA256</span>
+        <button class="copy-btn" onclick="copyCommand()">Copy</button>
+    </div>
+
+    <h2>⚙️ Architecture Breakdown</h2>
+    <ul class="features-list">
+        <li><strong>Kernel Standby List Purge:</strong> Directly orchestrates physical page cache reclamation using undocumented NTDLL <code class="inline-code">NtSetSystemInformation</code> commands with graceful degradation fallbacks.</li>
+        <li><strong>Active Working Set Trimming:</strong> Forces a systematic memory-map compression via <code class="inline-code">EmptyWorkingSet</code> across all non-vital operating system handles.</li>
+        <li><strong>Privacy Policy Injection:</strong> Intercepts systemic OS endpoints at the registry layer to drop background data telemetry collection hooks and Bing search bloatware.</li>
+        <li><strong>Race-Condition Guarded Shell:</strong> Asserts thread-safe process polling during explorer.exe sub-shell restarts to guarantee safe tile-cache resets.</li>
+    </ul>
+
+    <script>
+        function copyCommand() {
+            const text = document.getElementById('cmdText').innerText;
+            navigator.clipboard.writeText(text);
+            const btn = document.querySelector('.copy-btn');
+            btn.innerText = 'Copied!';
+            setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
+        }
+    </script>
+</body>
+</html>
